@@ -1,0 +1,45 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  createUserFunction
+
+  Sample SAM Template for createUserFunction
+
+Globals:
+  Function:
+    Timeout: 20
+    MemorySize: 512
+
+Resources:
+
+  RDProjectLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      CompatibleRuntimes:
+        - java17
+      ContentUri: ./layer.zip
+      Description: RD Layer
+      LayerName: rd-project-layer
+
+  CreateUser:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: CreateUser
+      Handler: com.rd.project.Handler::handleRequest
+      Runtime: java17
+      Architectures:
+        - x86_64
+      MemorySize: 512
+      Environment:
+        Variables:
+          PARAM1: VALUE
+      Events:
+        RDProject:
+          Type: Api
+          Properties:
+            Path: /users
+            Method: post
+      Layers:
+       - !Ref RDProjectLayer
+
+
